@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envelope Animation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f8c6d0; /* Slightly darker pink background */
+      overflow: hidden;
+    }
+
+    /* Envelope */
+    #envelope {
+      position: relative;
+      width: 280px;
+      height: 180px;
+      background-color: #b97fff; /* Slightly lighter purple envelope */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* Envelope flap */
+    .flap {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #9b66cc; /* Lighter purple flap */
+      clip-path: polygon(0 0, 50% 50%, 100% 0);
+      top: 0;
+      left: 0;
+      transform-origin: top center;
+      transition: transform 1s ease-in-out;
+    }
+
+    /* Hearts */
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #e74c3c; /* Red hearts */
+      transform: rotate(45deg);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #e74c3c;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      top: 0;
+      left: -10px;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) rotate(45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(calc(-50px + 100px * var(--dirX)), calc(-300px + 100px * var(--dirY))) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    /* XOXO JJ */
+    .xoxo-text {
+      position: absolute;
+      bottom: 5px; /* Move it slightly up from the bottom */
+      right: 10px; /* Position to the right */
+      font-family: 'Arial', sans-serif;
+      font-size: 14px; /* Slightly smaller text size */
+      font-weight: bold;
+      color: #9b66cc; /* Purple text */
+      opacity: 0;
+      text-align: center;
+    }
+
+    /* Text */
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Arial', sans-serif;
+      font-size: 20px;
+      font-weight: bold;
+      color: #d3d3d3; /* Light grey text */
+      opacity: 0;
+      text-align: center;
+    }
+
+    /* Open envelope */
+    .open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .open .triangle-fold {
+      display: none; /* Remove fold when envelope opens */
+    }
+
+    .open .xoxo-text {
+      opacity: 1; /* Show XOXO JJ text after envelope opens */
+      animation: showText 2s ease-in-out forwards;
+    }
+
+    .open #message {
+      opacity: 1; /* Show the message text after envelope opens */
+      animation: fadeInText 2s ease-in-out forwards;
+    }
+
+    @keyframes showText {
+      0% {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInText {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="envelope" onclick="openEnvelope()">
+    <div class="flap"></div>
+    <div id="message">Will you be my Valentine?</div>
+    <div class="xoxo-text">XOXO JJ</div> <!-- Smaller text at bottom right -->
+  </div>
+
+  <script>
+    function openEnvelope() {
+      const envelope = document.getElementById('envelope');
+      envelope.classList.add('open');
+
+      // Show the message text and XOXO JJ text after the envelope opens
+      const message = document.getElementById('message');
+      const xoxoText = document.querySelector('.xoxo-text');
+      message.style.opacity = 1;
+      xoxoText.style.opacity = 1;
+
+      // Continuously release hearts
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.top = Math.random() * 100 + '%';
+        heart.style.setProperty('--dirX', Math.random() > 0.5 ? 1 : -1); // Random horizontal direction
+        heart.style.setProperty('--dirY', Math.random() > 0.5 ? 1 : -1); // Random vertical direction
+        heart.style.animationDelay = Math.random() + 's';
+        document.body.appendChild(heart);
+
+        // Remove heart after animation ends
+        setTimeout(() => {
+          heart.remove();
+        }, 3000);
+      }, 500); // Release hearts every 0.5 seconds
+    }
+  </script>
+</body>
+</html>
